@@ -1,0 +1,21 @@
+{
+	"name": "7_DS_Src_Blob",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage_Online",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "archive"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "online"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

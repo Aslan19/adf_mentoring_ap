@@ -1,0 +1,300 @@
+{
+	"name": "9_Metadata_driven_copy",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSql_9_Metadata_Table",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "pipelineId",
+											"value": {
+												"value": "@pipeline().RunId",
+												"type": "Expression"
+											}
+										},
+										{
+											"name": "source_filename",
+											"value": "$$FILENAME"
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE @{item().SinkSchema}.@{item().SinkTable}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"value": "@if(empty(item().ColumnMapping), json('{\"type\":\"TabularTranslator\",\"columnMappings\":{}}'), json(item().ColumnMapping))",
+									"type": "Expression"
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_9_SourceDataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_Container": {
+											"value": "@item().SourceContainer",
+											"type": "Expression"
+										},
+										"p_Folder": {
+											"value": "@item().SourceFolder",
+											"type": "Expression"
+										},
+										"p_Filename": {
+											"value": "@item().SourceFileName",
+											"type": "Expression"
+										},
+										"p_ColDelimeter": {
+											"value": "@item().ColumnDelimiter",
+											"type": "Expression"
+										},
+										"p_Encoding": {
+											"value": "@item().Encoding",
+											"type": "Expression"
+										},
+										"p_EscapeChar": {
+											"value": "@item().EscapeCharacter",
+											"type": "Expression"
+										},
+										"p_QuoteChar": {
+											"value": "@item().QuoteCharacter",
+											"type": "Expression"
+										},
+										"p_RowDelimeter": {
+											"value": "@item().RowDelimiter",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_9_SQL_StgTables",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_Schema": {
+											"value": "@item().SinkSchema",
+											"type": "Expression"
+										},
+										"p_Table": {
+											"value": "@item().SinkTable",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Stored procedure1",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Copy data1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[usp_LogCopyActivity]",
+								"storedProcedureParameters": {
+									"ActivityName": {
+										"value": {
+											"value": "'Copy data1'",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"EndTime": {
+										"value": {
+											"value": "@activity('Copy data1').ExecutionEndTime",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"ExecutionDetails": {
+										"value": {
+											"value": "@string(activity('Copy data1').output)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"PipelineName": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"RunId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"StartTime": {
+										"value": {
+											"value": "@activity('Copy data1').ExecutionStartTime",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"Status": {
+										"value": {
+											"value": "@activity('Copy data1').Status",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "LS_MoviesAzureSqlDatabase",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Stored procedure2",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Copy data1",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[usp_LogErrorActivity]",
+								"storedProcedureParameters": {
+									"ActivityName": {
+										"value": "Copy data 1",
+										"type": "String"
+									},
+									"ErrorDetails": {
+										"value": {
+											"value": "@string(activity('Copy data1').error)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"PipelineName": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"RunId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "LS_MoviesAzureSqlDatabase",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "Done"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-02-17T04:52:58Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

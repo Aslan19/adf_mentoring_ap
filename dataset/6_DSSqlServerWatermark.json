@@ -1,0 +1,31 @@
+{
+	"name": "6_DSSqlServerWatermark",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_MyLaptopSQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "archive"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "TableName",
+				"type": "varchar"
+			},
+			{
+				"name": "WatermarkValue",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "WatermarkTbl"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

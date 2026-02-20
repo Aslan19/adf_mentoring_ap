@@ -1,0 +1,66 @@
+{
+	"name": "AzureSql_9_Metadata_Table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_MoviesAzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "archive"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FileGroup",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SourceContainer",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SourceFolder",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SourceFileName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ColumnDelimiter",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Encoding",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EscapeCharacter",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QuoteCharacter",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SinkSchema",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SinkTable",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "etl",
+			"table": "tControlMetadata"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

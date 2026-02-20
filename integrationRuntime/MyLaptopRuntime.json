@@ -1,0 +1,6 @@
+{
+	"name": "MyLaptopRuntime",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

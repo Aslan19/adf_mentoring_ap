@@ -1,0 +1,22 @@
+{
+	"name": "LS_MyLaptopSQL",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AzureKeyVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "laptop-sql-conn-str"
+			}
+		},
+		"connectVia": {
+			"referenceName": "MyLaptopRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

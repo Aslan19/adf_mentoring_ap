@@ -1,0 +1,46 @@
+{
+	"name": "8_DS_SQL_vw_tOnlinePurchase",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_MoviesAzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "archive"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ServiceCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MovieIdNK",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Price",
+				"type": "decimal",
+				"precision": 4,
+				"scale": 1
+			},
+			{
+				"name": "TransactionId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TransactionDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "vw_tOnlinePurchase_Enriched"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

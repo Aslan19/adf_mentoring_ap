@@ -1,0 +1,65 @@
+{
+	"name": "11_Notification Sending pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get logic app URL",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@concat(pipeline().globalParameters.LogicAppSecretURI, '?api-version=7.0')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Send POST request",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Get logic app URL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": {
+						"value": "@activity('Get logic app URL').output.value",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{\n    \"DataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"PipelineName\": \"@{pipeline().Pipeline}\",\n    \"RunId\": \"@{pipeline().RunId}\",\n    \"Status\": \"@{activity('Get logic app URL').Status}\",\n    \"ErrorMessage\": \"@{if(equals(activity('Get logic app URL').Status, 'Failed'), activity('Get logic app URL').error.message, 'Pipeline completed successfully.')}\"\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-02-18T06:25:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

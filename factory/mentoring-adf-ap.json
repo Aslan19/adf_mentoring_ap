@@ -1,0 +1,17 @@
+{
+	"name": "mentoring-adf-ap",
+	"properties": {
+		"globalParameters": {
+			"LogicAppSecretURI": {
+				"type": "string",
+				"value": "https://mentoring-key-vault-ap.vault.azure.net/secrets/LogicAppUrl"
+			}
+		}
+	},
+	"location": "polandcentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a0c3062f-501c-4174-b964-174e706f7d76",
+		"tenantId": "b41b72d0-4e9f-4c26-8a69-f949f367c91d"
+	}
+}
