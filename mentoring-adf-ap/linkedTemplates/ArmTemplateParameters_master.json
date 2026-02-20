@@ -1,0 +1,39 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "mentoring-adf-ap"
+		},
+		"LS_AzureBlobStorage_properties_typeProperties_sasUri_secretName": {
+			"value": "blob-uri"
+		},
+		"LS_AzureBlobStorageAusrt_properties_typeProperties_sasUri_secretName": {
+			"value": "blob-aus"
+		},
+		"LS_AzureBlobStorage_Online_properties_typeProperties_sasUri_secretName": {
+			"value": "blob-online-sasuri"
+		},
+		"LS_AzureDataLakeStorage_properties_typeProperties_url": {
+			"value": "https://azurementoringdatalakeap.dfs.core.windows.net/"
+		},
+		"LS_AzureKeyVault_properties_typeProperties_baseUrl": {
+			"value": "https://mentoring-key-vault-ap.vault.azure.net/"
+		},
+		"LS_DataMartAzureSqlDatabase_properties_typeProperties_connectionString_secretName": {
+			"value": "sql-datamart-conn-str"
+		},
+		"LS_MoviesAzureSqlDatabase_properties_typeProperties_connectionString_secretName": {
+			"value": "sql-movies-conn-string"
+		},
+		"LS_MyLaptopSQL_properties_typeProperties_connectionString_secretName": {
+			"value": "laptop-sql-conn-str"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
